@@ -26,37 +26,52 @@ Public Class Datos
     End Sub
 
     Public Function Grs() As List(Of Gr)
-        Dim grandesRecorridos = From drg In dsGrs.Grs
-                                Order By drg.Id Ascending
-                                Select New Gr(drg.Id, drg.Nombre,
-                                    drg.Descripcion,
-                                    (Aggregate km In dsGrs.Etapas Where km.Gr = drg.Id Into Sum(km.Km)),
-                                    (Aggregate des In dsGrs.Etapas Where des.Gr = drg.Id Into Max(des.Desnivel)))
+        Try
+            Dim grandesRecorridos = From drg In dsGrs.Grs
+                                    Order By drg.Id Ascending
+                                    Select New Gr(drg.Id, drg.Nombre,
+                                        drg.Descripcion.DefaultIfEmpty("Sin descripcion").ToString,
+                                        (Aggregate km In dsGrs.Etapas Where km.Gr = drg.Id Into Sum(km.Km)),
+                                        (Aggregate des In dsGrs.Etapas Where des.Gr = drg.Id Into Max(des.Desnivel)))
 
-        Return grandesRecorridos.ToList
+            Return grandesRecorridos.ToList
+        Catch ex As Exception
+            Throw ex
+        End Try
+
 
     End Function
 
 
     Public Function AlberguesPorZona(idZona As String) As List(Of Albergue)
-        Dim albergues = From dra In dsGrs.Albergues
-                        Where dra.IdZona = idZona
-                        Order By dra.Nombre Ascending
-                        Select New Albergue(dra.Id, dra.IdZona, dra.Nombre, dra.TotalPlazas, dra.Precio,
-                            ((From drz In dsGrs.Zonas Where drz.Id = idZona Select drz.Nombre).SingleOrDefault),
-                            (Aggregate dro In dsGrs.Ocupaciones Where dro.IdAlbergue = dra.Id Into Count()))
+        Try
+            Dim albergues = From dra In dsGrs.Albergues
+                            Where dra.IdZona = idZona
+                            Order By dra.Nombre Ascending
+                            Select New Albergue(dra.Id, dra.IdZona, dra.Nombre, dra.TotalPlazas, dra.Precio,
+                                ((From drz In dsGrs.Zonas Where drz.Id = idZona Select drz.Nombre).SingleOrDefault),
+                                (Aggregate dro In dsGrs.Ocupaciones Where dro.IdAlbergue = dra.Id Into Count()))
 
-        Return albergues.ToList
+            Return albergues.ToList
+        Catch ex As Exception
+            Throw ex
+        End Try
+
     End Function
 
     Public Function EtapasPorGr(idGr As String) As List(Of Etapa)
-        Dim etapas = From dre In dsGrs.Etapas
-                     Join drz In dsGrs.Zonas
-                         On dre.IdZona Equals drz.Id
-                     Where dre.Gr = idGr
-                     Select New Etapa(dre.NumEtapa, dre.Gr, drz.Id, dre.Km, dre.Desnivel)
+        Try
+            Dim etapas = From dre In dsGrs.Etapas
+                         Join drz In dsGrs.Zonas
+                             On dre.IdZona Equals drz.Id
+                         Where dre.Gr = idGr
+                         Select New Etapa(dre.NumEtapa, dre.Gr, drz.Id, dre.Km, dre.Desnivel)
 
-        Return etapas.ToList
+            Return etapas.ToList
+        Catch ex As Exception
+            Throw ex
+        End Try
+
     End Function
 
 End Class

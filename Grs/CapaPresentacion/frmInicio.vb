@@ -4,21 +4,34 @@ Public Class frmInicio
 
     Private _negocio As New Negocio
     Private Sub frmInicio_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        For Each gr In _negocio.DevolverGrs
-            cmbGr.Items.Add(gr)
-            cmbGr.DisplayMember = "id"
-        Next
+        Try
+            For Each gr In _negocio.DevolverGrs
+                cmbGr.Items.Add(gr)
+                cmbGr.DisplayMember = "id"
+
+
+            Next
+        Catch ex As Exception
+            MessageBox.Show("Error de conexion o datos")
+        End Try
+
+
 
     End Sub
 
     Private Sub cmbGr_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbGr.SelectedIndexChanged
-        Dim gr As Gr = cmbGr.SelectedItem
-        lblDescripcionMostrar.Text = gr.Descripcion
-        lblDesnivelMaximoMostrar.Text = gr.DesnivelMaximo
-        lblKmTotalesMostrar.Text = gr.KmsTotales
-        lblNombreGrMostrar.Text = gr.Nombre
-        dgvEtapas.DataSource = _negocio.EtapasPorGr(gr.Id)
-        lblEtapas.Text = "Etapas del " & gr.Id
+        Try
+            Dim gr As Gr = cmbGr.SelectedItem
+            lblDescripcionMostrar.Text = gr.Descripcion
+            lblDesnivelMaximoMostrar.Text = gr.DesnivelMaximo
+            lblKmTotalesMostrar.Text = gr.KmsTotales
+            lblNombreGrMostrar.Text = gr.Nombre
+            dgvEtapas.DataSource = _negocio.EtapasPorGr(gr.Id)
+            lblEtapas.Text = "Etapas del " & gr.Id
+        Catch ex As Exception
+            MessageBox.Show("Error de conexion o datos")
+        End Try
+
     End Sub
 
 
@@ -31,8 +44,6 @@ Public Class frmInicio
             dgvAlbergues.DataSource = _negocio.AlberguesPorZona(dgvEtapas.CurrentRow.Cells(2).Value)
             lblAlbergues.Text = "Albergues de " & dgvEtapas.CurrentRow.Cells(2).Value
         End If
-
-
     End Sub
 
 End Class
